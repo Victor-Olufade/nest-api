@@ -8,31 +8,35 @@ import {
   Param,
 } from '@nestjs/common';
 import { CreateItemDto } from './dto/create-item.dto';
+import { ItemsService } from './items.service';
+import { Item } from './interfaces/item.interface';
+import { updateItem } from './interfaces/item.interface';
 
 @Controller('items')
 export class ItemsController {
+  constructor(private readonly itemsService: ItemsService) {}
   @Get()
-  getAll(): string {
-    return 'get all items';
+  getAll(): Promise<Item[]> {
+    return this.itemsService.getAll();
   }
 
   @Get(':id')
-  getOne(@Param() param): string {
-    return `${param.id}`;
+  getOne(@Param() param): Promise<Item> {
+    return this.itemsService.getOne(param.id);
   }
 
   @Post()
-  create(@Body() createItemDto: CreateItemDto): string {
-    return `${createItemDto.description}`;
+  create(@Body() createItemDto: CreateItemDto): Promise<Item> {
+    return this.itemsService.create(createItemDto);
   }
 
   @Delete(':id')
-  delete(@Param('id') id): string {
-    return `${id}`;
+  delete(@Param('id') id): Promise<Item> {
+    return this.itemsService.delete(id);
   }
 
   @Put(':id')
-  update(@Param('id') id, @Body() updateItemDto: CreateItemDto) {
-    return `${updateItemDto.name}-${id}`;
+  update(@Param('id') id, @Body() updateItemDto: updateItem) {
+    return this.itemsService.update(updateItemDto, id);
   }
 }
